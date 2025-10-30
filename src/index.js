@@ -510,28 +510,28 @@ function stripBlockComments(element) {
 
 /**
  * Strip inactive media queries from embedded stylesheets.
- * @param {HTMLStyleElement} style Style element to filter media queries from.
+ * @param {HTMLStyleElement} element Style element to filter media queries from.
  * @return {void}
  */
-function filterWinningMediaQueries(style) {
-	if (style.media && !globalThis.matchMedia(style.media).matches) {
-		style.parentElement.removeChild(style);
+function filterActiveMediaQueries(element) {
+	if (element.media && !globalThis.matchMedia(element.media).matches) {
+		element.parentElement.removeChild(element);
 		return;
 	}
-	if (!style.textContent.includes('@media')) {
+	if (!element.textContent.includes('@media')) {
 		return;
 	}
 
 	const mediaRuleRegex = /@media([^{]+)\{((?:(?!\}\s*\})[\s\S])*\})\s*\}/;
 	let mediaRuleMatch;
 
-	while ((mediaRuleMatch = mediaRuleRegex.exec(style.textContent))) {
+	while ((mediaRuleMatch = mediaRuleRegex.exec(element.textContent))) {
 		const conditionText = mediaRuleMatch[1].trim();
 		const cssText = mediaRuleMatch[2].trim();
 		if (globalThis.matchMedia(conditionText).matches) {
-			style.textContent = style.textContent.replace(mediaRuleMatch[0], cssText);
+			element.textContent = element.textContent.replace(mediaRuleMatch[0], cssText);
 		} else {
-			style.textContent = style.textContent.replace(mediaRuleMatch[0], '');
+			element.textContent = element.textContent.replace(mediaRuleMatch[0], '');
 		}
 	}
 }
