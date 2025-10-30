@@ -12,49 +12,50 @@ let tagNameDefaultStyles = {};
  * @constant
  * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Block-level_elements
  */
-const ascentStoppers = new Set([
-	'ADDRESS',
-	'ARTICLE',
-	'ASIDE',
-	'BLOCKQUOTE',
-	'DETAILS',
-	'DIALOG',
-	'DD',
-	'DIV',
-	'DL',
-	'DT',
-	'FIELDSET',
-	'FIGCAPTION',
-	'FIGURE',
-	'FOOTER',
-	'FORM',
-	'H1',
-	'H2',
-	'H3',
-	'H4',
-	'H5',
-	'H6',
-	'HEADER',
-	'HGROUP',
-	'HR',
-	'LI',
-	'MAIN',
-	'NAV',
-	'OL',
-	'P',
-	'PRE',
-	'SECTION',
-	'SVG',
-	'TABLE',
-	'UL',
+const blockStoppers = new Set([
+	'address',
+	'article',
+	'aside',
+	'blockquote',
+	'details',
+	'dialog',
+	'dd',
+	'div',
+	'dl',
+	'dt',
+	'fieldset',
+	'figcaption',
+	'figure',
+	'footer',
+	'form',
+	'h1',
+	'h2',
+	'h3',
+	'h4',
+	'h5',
+	'h6',
+	'header',
+	'hgroup',
+	'hr',
+	'li',
+	'main',
+	'nav',
+	'ol',
+	'p',
+	'pre',
+	'section',
+	'svg',
+	'table',
+	'ul',
 	// this is some non-standard ones
-	'math', // intentionally lowercase, thanks Safari
-	'RUBY', // in case we have a ruby element
+	'math', // intentionally lowercase, thanks safari
+	'ruby', // in case we have a ruby element
 	'svg', // in case we have an svg embedded element
-	// these are ultimate stoppers in case something drastic changes in how the DOM works
-	'BODY',
-	'HEAD',
-	'HTML',
+	// these are ultimate stoppers in case something drastic changes in how the dom works
+	'body',
+	'head',
+	'html',
+]);
 ]);
 
 /**
@@ -228,151 +229,60 @@ function createSandbox() {
 		charsetToUse,
 		iframe.id
 	);
+}
 
-	function getRandomFourDigit() {
-		return Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
-	}
+/**
+ * Generates a random 4-digit number.
+ */
+function getRandomFourDigit() {
+	return Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+}
 
-	function escapeHTML(unsafeText) {
-		if (unsafeText) {
-			const div = globalThis.document.createElement('div');
-			div.innerText = unsafeText;
-			return div.innerHTML;
-		} else {
-			return '';
-		}
-	}
-
-	function tryTechniques(sandbox, doctype, charset, title) {
-		// Try the good old-fashioned document write with all the correct attributes set
-		try {
-			sandbox.contentWindow.document.write(
-				`${doctype}<html><head><meta charset='${charset}'><title>${title}</title></head><body></body></html>`
-			);
-			return sandbox;
-		} catch (_) {
-			// Swallow exception and fall through to next technique
-		}
-
-		const metaCharset = globalThis.document.createElement('meta');
-		metaCharset.setAttribute('charset', charset);
-
-		// Let's attempt it using srcdoc, so we can still set the doctype and charset
-		try {
-			const sandboxDocument = globalThis.document.implementation.createHTMLDocument(title);
-			sandboxDocument.head.appendChild(metaCharset);
-			const sandboxHTML = doctype + sandboxDocument.documentElement.outerHTML;
-			sandbox.setAttribute('srcdoc', sandboxHTML);
-			return sandbox;
-		} catch (_) {
-			// Swallow exception and fall through to the simplest path
-		}
-
-		// Let's attempt it using contentDocument... here we're not able to set the doctype
-		sandbox.contentDocument.head.appendChild(metaCharset);
-		sandbox.contentDocument.title = title;
-		return sandbox;
+/**
+ * Utility that escapes unsafe HTML into text content strings.
+ */
+function escapeHTML(unsafeText) {
+	if (unsafeText) {
+		const div = globalThis.document.createElement('div');
+		div.innerText = unsafeText;
+		return div.innerHTML;
+	} else {
+		return '';
 	}
 }
 
 /**
- * Returns the default styles for a given element in the DOM tree.
- * If the styles have already been computed, it returns the cached value.
- *
- * @param {Context} context Context of the process.
- * @param {HTMLElement} sourceElement Source element to get default styles for.
- * @return {CSSStyleDeclaration} Default styles for the element.
+ * Uses multiple DOM techniques to create a iframe compatible with the content element.
  */
-function getDefaultStyle(context, sourceElement) {
-	const tagHierarchy = computeTagHierarchy(sourceElement);
-	const tagKey = computeTagKey(tagHierarchy);
-	if (tagNameDefaultStyles[tagKey]) {
-		return tagNameDefaultStyles[tagKey];
+function tryTechniques(sandbox, doctype, charset, title) {
+	// Try the good old-fashioned document write with all the correct attributes set
+	try {
+		sandbox.contentWindow.document.write(
+			`${doctype}<html><head><meta charset='${charset}'><title>${title}</title></head><body></body></html>`
+		);
+		return sandbox;
+	} catch (_) {
+		// Swallow exception and fall through to next technique
 	}
 
-	// We haven't cached the answer for that hierachy yet, build a
-	// sandbox (if not yet created), fill it with the hierarchy that
-	// matters, and grab the default styles associated
-	const defaultElement = constructElementHierachy(
-		context.self.document,
-		tagHierarchy
-	);
-	const defaultStyle = computeStyleForDefaults(context.self, defaultElement);
-	destroyElementHierarchy(defaultElement);
+	const metaCharset = globalThis.document.createElement('meta');
+	metaCharset.setAttribute('charset', charset);
 
-	tagNameDefaultStyles[tagKey] = defaultStyle;
-	return defaultStyle;
-
-	function computeTagHierarchy(sourceNode) {
-		const tagNames = [sourceNode.tagName];
-
-		if (ascentStoppers.has(sourceNode.tagName)) {
-			return tagNames;
-		}
-
-		let targetNode = sourceNode;
-		while ((targetNode = targetNode.parentNode)) {
-			if (targetNode.nodeType === globalThis.Node.ELEMENT_NODE) {
-				const tagName = targetNode.tagName;
-				tagNames.push(tagName);
-
-				if (ascentStoppers.has(tagName)) {
-					break;
-				}
-			}
-		}
-
-		return tagNames;
+	// Let's attempt it using srcdoc, so we can still set the doctype and charset
+	try {
+		const sandboxDocument = globalThis.document.implementation.createHTMLDocument(title);
+		sandboxDocument.head.appendChild(metaCharset);
+		const sandboxHTML = doctype + sandboxDocument.documentElement.outerHTML;
+		sandbox.setAttribute('srcdoc', sandboxHTML);
+		return sandbox;
+	} catch (_) {
+		// Swallow exception and fall through to the simplest path
 	}
 
-	function computeTagKey(hierarchy) {
-		return hierarchy
-			.filter((_, i, a) => i === 0 || i === a.length - 1)
-			.join(' ');
-	}
-
-	function constructElementHierachy(sandboxDocument, hierarchy) {
-		let element = sandboxDocument.body;
-		while (hierarchy.length > 0) {
-			const childTagName = hierarchy.pop();
-			const childElement = sandboxDocument.createElement(childTagName);
-			element.appendChild(childElement);
-			element = childElement;
-		}
-
-		// Ensure that there is some content, so that properties like margin are applied.
-		// we use zero-width space to handle FireFox adding a pixel
-		element.textContent = '\u200b';
-		return element;
-	}
-
-	function computeStyleForDefaults(sandboxWindow, sandboxElement) {
-		const style = {};
-		const defaultComputedStyle = sandboxWindow.getComputedStyle(sandboxElement);
-
-		// Copy styles to an object, making sure that 'width' and 'height' are given the default value of 'auto', since
-		// their initial value is always 'auto' despite that the default computed value is sometimes an absolute length.
-		Array.from(defaultComputedStyle).forEach(function(name) {
-			style[name] =
-				name === 'width' || name === 'height'
-					? 'auto'
-					: defaultComputedStyle.getPropertyValue(name);
-		});
-		return style;
-	}
-
-	function destroyElementHierarchy(element) {
-		let targetElement = element;
-		let parentElement = element.parentElement;
-
-		while (targetElement && targetElement.tagName !== 'BODY') {
-			parentElement = targetElement.parentElement;
-			if (parentElement !== null) {
-				parentElement.removeChild(targetElement);
-			}
-			targetElement = parentElement;
-		}
-	}
+	// Let's attempt it using contentDocument... here we're not able to set the doctype
+	sandbox.contentDocument.head.appendChild(metaCharset);
+	sandbox.contentDocument.title = title;
+	return sandbox;
 }
 
 /**
@@ -764,7 +674,151 @@ function unfreezeStyleAnimations(styles, animations) {
 }
 
 /**
- * Tokenize inline styling declarations.
+/**
+ * Returns the default styles for a given element in the DOM tree.
+ * If the styles have already been computed, it returns the cached value.
+ *
+ * @param {Context} context Context of the process.
+ * @param {HTMLElement} sourceElement Source element to get default styles for.
+ * @return {CSSStyleDeclaration} Default styles for the element.
+ */
+function getDefaultStyle(context, sourceElement) {
+	const tagHierarchy = computeTagHierarchy(sourceElement);
+	const tagKey = computeTagKey(tagHierarchy, context.options);
+	if (tagNameDefaultStyles[tagKey]) {
+		return tagNameDefaultStyles[tagKey];
+	}
+
+	// We haven't cached the answer for that hierachy yet, build a
+	// sandbox (if not yet created), fill it with the hierarchy that
+	// matters, and grab the default styles associated
+	const defaultElement = constructElementHierachy(
+		context.self.document,
+		tagHierarchy
+	);
+	const defaultStyle = computeStyleForDefaults(context.self, defaultElement);
+	destroyElementHierarchy(defaultElement);
+
+	tagNameDefaultStyles[tagKey] = defaultStyle;
+	return defaultStyle;
+}
+
+/**
+ * Filters an array into start and end delimiters.
+ *
+ * @param {string} e Element.
+ * @param {number} i Element index.
+ * @param {string[]} a Array.
+ */
+const isArrayDelimiter = (e, i, a) => i === 0 || i === a.length - 1;
+
+/**
+ * Constructs the cache key for an ascending element hierarchy.
+ *
+ * @param {string[]} hierarchy Reversed list of element tags.
+ * @return {string} Cache key in the form `parent>element`.
+ */
+function computeTagKey(hierarchy, options) {
+	if (options.strict === false) {
+		return hierarchy.filter(isArrayDelimiter).reverse().join(' ').toLowerCase();
+	}
+	return hierarchy.reverse().join('>').toLowerCase();
+}
+
+/**
+ * Computes the tag list of the ascending tree of an element.
+ *
+ * @param {HTMLElement} sourceNode Source element to compute ascending block tree of.
+ * @return {string[]} Reversed list of element tag names for the element's hierarchy.
+ */
+function computeTagHierarchy(sourceNode) {
+	const tagNames = [sourceNode.tagName.toLowerCase()];
+
+	if (blockStoppers.has(sourceNode.tagName.toLowerCase())) {
+		return tagNames;
+	}
+
+	let targetNode = sourceNode;
+	while ((targetNode = targetNode.parentNode)) {
+		if (targetNode.nodeType === globalThis.Node.ELEMENT_NODE) {
+			const tagName = targetNode.tagName.toLowerCase();
+			tagNames.push(tagName);
+
+			if (blockStoppers.has(tagName)) {
+				break;
+			}
+		}
+	}
+
+	return tagNames;
+}
+
+/**
+ * Construct a copy of the element's hierarchy in the sandbox iframe
+ * until its block level element context.
+ *
+ * @param {HTMLDocument} sandboxDocument The sandbox iframe's content document.
+ * @param {string[]} hierarchy Reversed list of element tags to create.
+ * @return {HTMLElement} Child & root node of the new element hierarchy.
+ */
+function constructElementHierachy(sandboxDocument, hierarchy) {
+	let element = sandboxDocument.body;
+	while (hierarchy.length > 0) {
+		const childTagName = hierarchy.pop();
+		const childElement = sandboxDocument.createElement(childTagName);
+		element.appendChild(childElement);
+		element = childElement;
+	}
+
+	// Ensure that there is some content, so that properties like margin are applied.
+	// we use zero-width space to handle Firefox adding a pixel.
+	element.textContent = '\u200b';
+	return element;
+}
+
+/**
+ * Computes a set of default style properties for an element.
+ * The default styles are those contributed by the user agent origin.
+ *
+ * @param {Window} sandboxWindow The sandbox iframe's global variable.
+ * @param {HTMLElement} sandboxElement The element to query styles from.
+ * @return {Record<string, string>} User agent style declaration for the element.
+ */
+function computeStyleForDefaults(sandboxWindow, sandboxElement) {
+	const style = {};
+	const defaultComputedStyle = sandboxWindow.getComputedStyle(sandboxElement);
+
+	// Copy styles to an object, making sure that 'width' and 'height' are given the default value of 'auto', since
+	// their initial value is always 'auto' despite that the default computed value is sometimes an absolute length.
+	Array.from(defaultComputedStyle).forEach(function(name) {
+		style[name] =
+			name === 'width' || name === 'height'
+				? 'auto'
+				: defaultComputedStyle.getPropertyValue(name);
+	});
+	return style;
+}
+
+/**
+ * Removes an element and its parent tree from sandbox document.
+ *
+ * @param {HTMLElement} element The sandbox element to remove.
+ */
+function destroyElementHierarchy(element) {
+	let targetElement = element;
+	let parentElement = element.parentElement;
+
+	while (targetElement && targetElement.tagName !== 'BODY') {
+		parentElement = targetElement.parentElement;
+		if (parentElement !== null) {
+			parentElement.removeChild(targetElement);
+		}
+		targetElement = parentElement;
+	}
+}
+
+/**
+ * Tokenize inline CSS styling declarations.
  *
  * @param {string} cssText Inline style attribute value for a HTML element.
  * @return {string[]} List of inline styling declarations.
