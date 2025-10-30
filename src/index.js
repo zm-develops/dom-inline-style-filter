@@ -1,6 +1,5 @@
 const contentElement = globalThis.document.body || globalThis.document.documentElement;
 const cssBlockCommentRegex = /\/\*[^*]*\*+([^/*][^*]*\*+)*\//g;
-const cssDeclarationColonRegex = /;\s*(?=-*\w+(?:-\w+)*:\s*(?:[^"']*["'][^"']*["'])*[^"']*$)/g;
 
 let removeDefaultStylesTimeoutId = null;
 let tagNameDefaultStyles = {};
@@ -564,7 +563,8 @@ function filterAuthorInlineStyles(context, element) {
 	const defaultStyle = getDefaultStyle(context, element);
 
 	// Splice explicit inline style declarations that match default and parent values.
-	Array.from(styles.inline)
+	tokenizeCssTextDeclarations(styles.inline.cssText)
+		.map(getCssTextProperty)
 		.sort(compareHyphenCount)
 		.forEach(spliceAuthorCssStyleDeclaration.bind(null, styles, parentComputedStyle, defaultStyle));
 
@@ -598,10 +598,16 @@ function filterWinningInlineStyles(context, element) {
 
 	// Splice explicit inline style declarations without a computed effect in place.
 	// By prioritising standard CSS properties & lots of hyphens, we reduce attack time & perf load.
-	tokenizeCssTextDeclarations(styles.inline.cssText)
-		.map(getCssTextProperty)
-		.sort(compareHyphenCount)
-		.forEach(spliceWinningCssTextDeclaration.bind(null, styles));
+	if (styles.inline.display === 'none') {
+		context.declarations -= styles.inline.length;
+		styles.inline.cssText = 'display: none;';
+		context.declarations += 1;
+	} else {
+		tokenizeCssTextDeclarations(styles.inline.cssText)
+			.map(getCssTextProperty)
+			.sort(compareHyphenCount)
+			.forEach(spliceActiveCssTextDeclaration.bind(null, styles));
+	}
 
 	// Restore dynamic CSS properties.
 	unfreezeStyleAnimations(styles, animations);
@@ -824,7 +830,29 @@ function destroyElementHierarchy(element) {
  * @return {string[]} List of inline styling declarations.
  */
 function tokenizeCssTextDeclarations(cssText) {
-	return cssText.replace(/;\s*$/, '').split(cssDeclarationColonRegex);
+	const declarations = [];
+	let isQuoted = false;
+	let prevIndex = 0;
+
+	for (let index = 0; index < cssText.length; index++) {
+		const char = cssText.charAt(index);
+		if (char === '"' || char === '\'') {
+			isQuoted = !isQuoted;
+		}
+
+		const isSemicolon = char === ';';
+		const isEol = index === cssText.length - 1;
+		if (!isQuoted && (isSemicolon || isEol)) {
+			const declaration = cssText.substring(
+				prevIndex,
+				isEol && !isSemicolon ? index + 1 : index
+			);
+			declarations.push(declaration);
+			prevIndex = index + 1;
+		}
+	}
+
+	return declarations;
 }
 
 /**
