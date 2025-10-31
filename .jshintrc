@@ -1,0 +1,10 @@
+{
+	"expr": true,
+	"jasmine": true,
+    "eqeqeq": true,
+    "esnext": true,
+    "immed": true,
+    "laxbreak": true,
+    "newcap": true,
+    "unused": "vars"
+}

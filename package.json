@@ -4,10 +4,11 @@
   "description": "High-pass data compression filter for inline styling (embedded CSS) by computed effect.",
   "main": "./dist/index.min.js",
   "scripts": {
-    "build": "rollup --config ./rollup.config.js",
-    "test": "npm-run-all build test-syntax test-lint",
+    "test": "npm-run-all build test-syntax test-lint test-grunt",
     "test-lint": "eslint src/index.js",
-    "test-syntax": "node --check src/index.js"
+    "test-syntax": "node --check src/index.js",
+    "test-karma": "karma start karma.conf.js --single-run",
+    "format": "eslint src --fix && prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -23,13 +24,25 @@
   },
   "homepage": "https://github.com/zm-cttae/dom-inline-style-filter#readme",
   "devDependencies": {
-    "@lopatnov/rollup-plugin-uglify": "^2.1.5",
     "eslint": "^8.40.0",
     "eslint-plugin-jsdoc": "^46.2.6",
+    "grunt": "^1.6.1",
+    "grunt-cli": "^1.5.0",
+    "grunt-contrib-jshint": "^3.2.0",
+    "grunt-contrib-uglify": "^5.2.2",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-karma": "^4.0.2",
+    "jasmine-browser-runner": "^3.0.0",
+    "jasmine-core": "^5.12.1",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-cli": "^2.0.0",
+    "karma-firefox-launcher": "^2.1.3",
+    "karma-jasmine": "^5.1.0",
+    "karma-mocha": "^2.0.1",
     "npm-run-all": "^4.1.5",
-    "rollup": "^3.21.5",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "terser": "^5.17.1"
+    "prettier": "^3.6.2",
+    "semver": "^7.7.2"
   },
   "peerDependencies": {
     "dom-to-image-more": "^3.0.0"
