@@ -915,7 +915,7 @@ function getDefaultStyle(context, sourceElement) {
  * @param {number} i Element index.
  * @param {string[]} a Array.
  */
-const isArrayDelimiter = (e, i, a) => i === 0 || i === a.length - 1;
+const isArrayDelimiter = (_e, i, a) => i === 0 || i === a.length - 1;
 
 /**
  * Constructs the cache key for an ascending element hierarchy.
@@ -1156,7 +1156,7 @@ function spliceActiveCssTextDeclaration(styles, name) {
 		return;
 	}
 
-	styles.inline.cssText = declarations.filter((_, i) => i !== index).join('; ') + ';';
+	styles.inline.cssText = declarations.filter((_d, i) => i !== index).join('; ') + ';';
 
 	const isEmptyValue = value === '';
 	const isComputedValue = value === styles.computed.getPropertyValue(name);
