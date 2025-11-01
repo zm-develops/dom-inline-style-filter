@@ -4,7 +4,8 @@
   "description": "High-pass data compression filter for inline styling (embedded CSS) by computed effect.",
   "main": "./dist/index.min.js",
   "scripts": {
-    "test": "npm-run-all build test-syntax test-lint test-grunt",
+    "build": "grunt build",
+    "test": "npm-run-all build test-syntax test-lint test-karma",
     "test-lint": "eslint src/index.js",
     "test-syntax": "node --check src/index.js",
     "test-karma": "karma start karma.conf.js --single-run",
@@ -31,7 +32,10 @@
     "grunt-contrib-jshint": "^3.2.0",
     "grunt-contrib-uglify": "^5.2.2",
     "grunt-contrib-watch": "^1.1.0",
+    "grunt-iife": "^0.3.0",
     "grunt-karma": "^4.0.2",
+    "grunt-transform-amd": "^1.1.1",
+    "jasmine": "^5.12.0",
     "jasmine-browser-runner": "^3.0.0",
     "jasmine-core": "^5.12.1",
     "karma": "^6.4.4",
@@ -41,8 +45,7 @@
     "karma-jasmine": "^5.1.0",
     "karma-mocha": "^2.0.1",
     "npm-run-all": "^4.1.5",
-    "prettier": "^3.6.2",
-    "semver": "^7.7.2"
+    "prettier": "^3.6.2"
   },
   "peerDependencies": {
     "dom-to-image-more": "^3.0.0"

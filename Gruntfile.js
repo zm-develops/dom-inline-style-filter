@@ -1,5 +1,17 @@
 module.exports = function(grunt) {
 	grunt.initConfig({
+		iife: {
+			dist: {
+				files: {
+					'dist/index.min.js': 'dist/index.min.js'
+				},
+				options: {
+					indent: '    ',
+					trimCode: true,
+					useStrict: true
+				}
+			}
+		},
 		jshint: {
 			files: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
 			options: {
@@ -14,10 +26,23 @@ module.exports = function(grunt) {
 			},
 		},
 		pkg: grunt.file.readJSON('package.json'),
+		transform_amd: {
+			src: {
+				options: {
+					cwd: 'src',
+					dest: 'dist',
+					replacements: {
+						'.js': 'min.js'
+					},
+					root: 'dominlinestylefilter',
+					src: ['**/*.js']
+				}
+			},
+		},
 		uglify: {
 			dist: {
 				files: {
-					'dist/index.min.js': ['src/index.js'],
+					'dist/index.min.js': ['dist/index.min.js'],
 				},
 			},
 			options: {
@@ -33,10 +58,12 @@ module.exports = function(grunt) {
 
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-karma');
+	grunt.loadNpmTasks('grunt-transform-amd');
+	grunt.loadNpmTasks('grunt-iife');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	grunt.registerTask('test', ['karma']);
-	grunt.registerTask('build', ['jshint', 'uglify']);
-	grunt.registerTask('default', ['jshint', 'test', 'uglify']);
+	grunt.registerTask('build', ['jshint', 'transform_amd', 'iife', 'uglify']);
+	grunt.registerTask('default', ['build', 'test']);
 };

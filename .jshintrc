@@ -2,7 +2,7 @@
 	"expr": true,
 	"jasmine": true,
     "eqeqeq": true,
-    "esnext": true,
+	"esversion": 8,
     "immed": true,
     "laxbreak": true,
     "newcap": true,

@@ -43,13 +43,13 @@ module.exports = function(config) {
 		// level of logging
 		logLevel: config.LOG_INFO,
 
+		// web server port
+		port: 9876,
+
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://www.npmjs.com/search?q=keywords:karma-preprocessor
 		preprocessors: {
 		},
-
-		// web server port
-		port: 9876,
 
 		// test results reporter to use
 		// possible values: 'dots', 'progress'
@@ -59,5 +59,5 @@ module.exports = function(config) {
 		// Continuous Integration mode
 		// if true, Karma captures browsers, runs the tests and exits
 		singleRun: false
-	})
-}
+	});
+};
