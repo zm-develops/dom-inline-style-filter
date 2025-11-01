@@ -560,19 +560,19 @@ const roundTo3dp = n => Math.round(n * 1000) / 1000;
 function debugFilterAuthorInlineStyles(context, timestamp) {
 	// [INPUT] data for the default style filter before 1st pass.
 	if (!timestamp) {
-		console.info('filterAuthorInlineStyles');
-		console.info('context.pyramid.length', context.pyramid.length);
-		console.info('context.declarations', context.declarations);
-		console.info('context.bytes', context.bytes);
+		console.debug('filterAuthorInlineStyles');
+		console.debug('context.pyramid.length', context.pyramid.length);
+		console.debug('context.declarations', context.declarations);
+		console.debug('context.bytes', context.bytes);
 		return performance.now();
 	}
 
 	// [OUTPUT] declaration count, bytecount and runtime (milliseconds).
-	console.info('filterAuthorInlineStyles');
-	console.info('context.declarations', context.declarations);
-	console.info('context.bytes', context.bytes);
-	console.info('context.delta', context.delta);
-	console.info('runtime(ms)', roundTo3dp(performance.now() - timestamp));
+	console.debug('filterAuthorInlineStyles');
+	console.debug('context.declarations', context.declarations);
+	console.debug('context.bytes', context.bytes);
+	console.debug('context.delta', context.delta);
+	console.debug('runtime(ms)', roundTo3dp(performance.now() - timestamp));
 }
 
 /**
@@ -586,24 +586,24 @@ function debugFilterAuthorInlineStyles(context, timestamp) {
 function debugFilterActiveInlineStyles(context, timestamp, pass) {
 	// [INPUT] data for the inline style filter before 1st pass.
 	if (pass === 0) {
-		console.info('filterActiveInlineStyles');
-		console.info('context.declarations', context.declarations);
-		console.info('context.bytes', context.bytes);
+		console.debug('filterActiveInlineStyles');
+		console.debug('context.declarations', context.declarations);
+		console.debug('context.bytes', context.bytes);
 		return performance.now();
 	}
 
 	// [PASS] iteration count and bytecount change for each pass.
 	if (pass) {
-		console.info('filterActiveInlineStyles', 'pass #' + pass);
+		console.debug('filterActiveInlineStyles', 'pass #' + pass);
 	} else {
-		console.info('filterActiveInlineStyles');
-		console.info('runtime(ms)', roundTo3dp(performance.now() - timestamp));
+		console.debug('filterActiveInlineStyles');
+		console.debug('runtime(ms)', roundTo3dp(performance.now() - timestamp));
 	}
 
 	// [OUTPUT] declaration count, bytecount and runtime (milliseconds).
-	console.info('context.declarations', context.declarations);
-	console.info('context.bytes', context.bytes);
-	console.info('context.delta', context.delta);
+	console.debug('context.declarations', context.declarations);
+	console.debug('context.bytes', context.bytes);
+	console.debug('context.delta', context.delta);
 }
 
 /**
@@ -738,7 +738,6 @@ function filterActiveInlineStyles(context, element, index) {
 	} else {
 		tokenizeCssTextDeclarations(styles.inline.cssText)
 			.map(getCssTextProperty)
-			.sort(compareHyphenCount)
 			.forEach(spliceActiveCssTextDeclaration.bind(null, styles));
 	}
 
@@ -839,7 +838,7 @@ function handleBoxModelOrigins(styles) {
 		// `auto` or `50% 50%`.
 		const unsetComputedValue = styles.computed.getPropertyValue(name);
 		if (unsetComputedValue !== roundedValue) {
-			styles.inline.setPropertyValue(inlineValue);
+			styles.inline.setProperty(name, inlineValue);
 		}
 	}
 }
@@ -856,8 +855,13 @@ function cacheAuthorStyleRegressionGuard(styles) {
 	const guardStyles = {};
 
 	for (const prop of regressionPropertySet) {
-		guardStyles[prop] = styles.inline.getPropertyValue(prop);
+		const value = styles.inline.getPropertyValue(prop);
+		if (value) {
+			guardStyles[prop] = value;
+		}
 	}
+
+	return guardStyles;
 }
 
 /**
@@ -872,10 +876,7 @@ function cacheAuthorStyleRegressionGuard(styles) {
  */
 function applyAuthorStyleRegressionGuard(styles, guardStyles) {
 	for (const prop of regressionPropertySet) {
-		const inlineValue = styles.inline.getPropertyValue('prop');
-		if (inlineValue !== guardStyles[prop]) {
-			styles.inline.setPropertyValue(prop, guardStyles[prop]);
-		}
+		styles.inline.setProperty(prop, guardStyles[prop]);
 	}
 }
 
@@ -1061,7 +1062,7 @@ function tokenizeCssTextDeclarations(cssText) {
  * @return {string} CSS property for `declaration`.
  */
 function getCssTextProperty(declaration) {
-	return declaration.slice(0, declaration.indexOf(':'));
+	return declaration.trim().slice(0, declaration.indexOf(':'));
 }
 
 /**
@@ -1174,7 +1175,7 @@ function spliceActiveCssTextDeclaration(styles, name) {
  * @param {Context} context Context of the process.
  * @return {HTMLElement} Root element of the clone.
  */
-function unstageClone(context) {
+function unstageClone(context, error) {
 	if (context.parent) {
 		context.parent.insertBefore(context.root, context.sibling);
 	}
@@ -1194,6 +1195,10 @@ function unstageClone(context) {
 		removeDefaultStylesTimeoutId = null;
 		tagNameDefaultStyles = {};
 	}, 20 * 1000);
+
+	if (error && error.stack) {
+		throw error;
+	}
 
 	return context.root;
 }
