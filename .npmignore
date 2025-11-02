@@ -1,6 +1,12 @@
+.venv/
 assets/
 node_modules/
+scripts/
 src/
+test/
 .editorconfig
 .eslintrc.json
 .gitignore
+.jshintrc
+Gruntfile.js
+karma.conf.js
