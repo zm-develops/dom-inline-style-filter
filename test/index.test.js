@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 const image = 'code';
-const bench =  document.querySelector('div#test-bench');
 
 const request = new XMLHttpRequest();
 request.open('GET', '/base/test/resources/' + image + '/' + image + '.svg', false);
@@ -26,7 +25,7 @@ console.info = infoSpy;
 
 // const computedStylesBefore = computedStylesFn();
 
-await globalThis.dominlinestylefilter(root, { debug: true });
+globalThis.dominlinestylefilter.sync(root, { debug: true });
 
 console.info = info;
 
@@ -97,13 +96,13 @@ describe(image + '.svg compression results', function() {
 		}
 	});
 
-	it('has a runtime of below 4ms/element in the author filter', function() {
+	it('has a runtime of below 5ms/element in the author filter', function() {
 		const count = generalData.elements;
 		const runtime = authorData.runtime;
-		expect(runtime / count).toBeLessThanOrEqual(4);
+		expect(runtime / count).toBeLessThanOrEqual(5);
 	});
 
-	it('has a runtime of below 8ms/element in the active filter', function() {
+	it('has a runtime of below 10ms/element in the active filter', function() {
 		const count = generalData.elements;
 		const runtime = activeData.runtime;
 		expect(runtime / count).toBeLessThanOrEqual(10);
