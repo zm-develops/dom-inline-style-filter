@@ -687,7 +687,8 @@ function filterAuthorInlineStyles(context, element) {
 	const defaultStyle = getDefaultStyle(context, element);
 
 	// Splice explicit inline style declarations that match default and parent values.
-	Array.from(styles.inline)
+	tokenizeCssTextDeclarations(styles.inline.cssText)
+		.map(getCssTextProperty)
 		.sort(compareHyphenCount)
 		.forEach(spliceAuthorCssStyleDeclaration.bind(null, styles, parentComputedStyle, defaultStyle));
 
