@@ -31,18 +31,15 @@ module.exports = function(grunt) {
 				options: {
 					cwd: 'src',
 					dest: 'dist',
-					replacements: {
-						'.js': 'min.js'
-					},
 					root: 'dominlinestylefilter',
-					src: ['**/*.js']
+					src: ['**/?.js']
 				}
 			},
 		},
 		uglify: {
 			dist: {
 				files: {
-					'dist/index.min.js': ['dist/index.min.js'],
+					'dist/index.min.js': ['src/index.js'],
 				},
 			},
 			options: {
@@ -64,6 +61,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	grunt.registerTask('test', ['karma']);
-	grunt.registerTask('build', ['jshint', 'transform_amd', 'iife', 'uglify']);
+	grunt.registerTask('build', ['jshint', 'transform_amd', 'uglify', 'iife']);
 	grunt.registerTask('default', ['build', 'test']);
 };
