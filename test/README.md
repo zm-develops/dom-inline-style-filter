@@ -52,7 +52,7 @@ $O(nlog(N))$ growth for inputs at large filesizes $|F| >> 1e6 \text{ bytes}$.
 
 ### Small file results
 
-$O(nlog(N)), \space c \space \approx \space 4$ growth for inputs at small filesizes $|F| << 1e6\space\text{ bytes}$.
+$O(nlog(N))$ growth for inputs at small filesizes $|F| << 1e6\space\text{ bytes}$.
 
 | Code screenshot demo      | Value                                  |
 | :------------------------ | :------------------------------------- |
