@@ -156,7 +156,13 @@ const dominlinestylefilter = function(clone, options) {
 		.catch(unstageClone.bind(null, context));
 };
 
-module.exports = dominlinestylefilter;
+if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
+	module.exports = dominlinestylefilter;
+} else if (typeof define === 'function' && define.amd) {
+	define(() => dominlinestylefilter);
+} else {
+	globalThis.dominlinestylefilter = dominlinestylefilter;
+}
 
 /**
  * Synchronous version of {@link onclone}.
