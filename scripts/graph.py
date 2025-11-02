@@ -20,23 +20,23 @@ for log in logs:
 	isFilteringInlineStyles = False
 
 	for line in lines:
-		if 'filterWinningInlineStyles' in line:
+		if 'filterActiveInlineStyles' in line:
 			isFilteringInlineStyles = True
 		if 'runtime(ms)' in line:
 			isFilteringInlineStyles = False
 		if not isFilteringInlineStyles:
 			continue
-		if 'filterWinningInlineStyles pass' in line:
+		if 'filterActiveInlineStyles pass' in line:
 			# Extract pass number
 			pass_number = int(line.split('#')[1])
 			passes.append(pass_number)
 		elif 'context.delta' in line:
 			# Extract delta value
-			delta_value = int(line.split()[2])
+			delta_value = float(line.split()[2])
 			deltas.append(delta_value)
 		elif 'context.bytes' in line:
 			# Extract bytes value
-			bytes_value = int(line.split()[2])
+			bytes_value = float(line.split()[2])
 			bytes_values.append(bytes_value)
 
 	# Ensure consistent lengths across arrays
@@ -75,4 +75,4 @@ for log in logs:
 
 	# Show and save the plot
 	plt.show()
-	plt.savefig('../assets/' + log + '-graph.png')
+	# plt.savefig(Path(__file__).parent.parent / 'assets' / (log + '-graph.png'))
