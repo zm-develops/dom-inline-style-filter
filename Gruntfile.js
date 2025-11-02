@@ -26,20 +26,10 @@ module.exports = function(grunt) {
 			},
 		},
 		pkg: grunt.file.readJSON('package.json'),
-		transform_amd: {
-			src: {
-				options: {
-					cwd: 'src',
-					dest: 'dist',
-					root: 'dominlinestylefilter',
-					src: ['**/?.js']
-				}
-			},
-		},
 		uglify: {
 			dist: {
 				files: {
-					'dist/index.min.js': ['src/index.js'],
+					'dist/index.min.js': ['dist/index.min.js'],
 				},
 			},
 			options: {
@@ -55,12 +45,11 @@ module.exports = function(grunt) {
 
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-karma');
-	grunt.loadNpmTasks('grunt-transform-amd');
 	grunt.loadNpmTasks('grunt-iife');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	grunt.registerTask('test', ['karma']);
-	grunt.registerTask('build', ['jshint', 'transform_amd', 'uglify', 'iife']);
+	grunt.registerTask('build', ['jshint', 'iife', 'uglify']);
 	grunt.registerTask('default', ['build', 'test']);
 };
