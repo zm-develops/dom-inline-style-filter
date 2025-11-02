@@ -735,7 +735,7 @@ function filterActiveInlineStyles(context, element, index) {
 		styles.inline.cssText = 'display: none;';
 		context.declarations += 1;
 	} else {
-		tokenizeCssTextDeclarations(styles.inline)
+		tokenizeCssTextDeclarations(styles.inline.cssText)
 			.map(getCssTextProperty)
 			.sort(compareHyphenCount)
 			.forEach(spliceActiveCssTextDeclaration.bind(null, styles));
