@@ -17,19 +17,19 @@
 	const computedStylesFn = getCachedDeclaration(el => getComputedStyle(el));
 	const inlineStylesFn = getCachedDeclaration(el => el.style);
 
-	const debug = console.debug;
+	const info = console.info;
 	let buffer = [];
-	const debugSpy = function() {
+	const infoSpy = function() {
 		buffer.push([...arguments].join(' '));
-		debug.call(console, ...arguments);
+		info.call(console, ...arguments);
 	};
-	console.debug = debugSpy;
+	console.info = infoSpy;
 
 	const computedStylesBefore = computedStylesFn();
 
 	await globalThis.dominlinestylefilter(root, { debug: true });
 
-	console.debug = debug;
+	console.info = info;
 
 	const generalData = {};
 	const authorData = { bytes: [], declarations: [] };
@@ -172,12 +172,12 @@
 		it('produces determinate results across runs', function() {
 			const prevBuffer = structuredClone(buffer);
 
-			console.debug = debugSpy;
+			console.info = infoSpy;
 			buffer = [];
 
 			globalThis.dominlinestylefilter.sync(root, { debug: true });
 
-			console.debug = debug;
+			console.info = info;
 
 			let isInAuthorResult = 0;
 			let isInActiveResult = 0;

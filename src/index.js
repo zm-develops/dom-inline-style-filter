@@ -560,19 +560,19 @@ const roundTo3dp = n => Math.round(n * 1000) / 1000;
 function debugFilterAuthorInlineStyles(context, timestamp) {
 	// [INPUT] data for the default style filter before 1st pass.
 	if (!timestamp) {
-		console.debug('filterAuthorInlineStyles');
-		console.debug('context.pyramid.length', context.pyramid.length);
-		console.debug('context.declarations', context.declarations);
-		console.debug('context.bytes', context.bytes);
+		console.info('filterAuthorInlineStyles');
+		console.info('context.pyramid.length', context.pyramid.length);
+		console.info('context.declarations', context.declarations);
+		console.info('context.bytes', context.bytes);
 		return performance.now();
 	}
 
 	// [OUTPUT] declaration count, bytecount and runtime (milliseconds).
-	console.debug('filterAuthorInlineStyles');
-	console.debug('context.declarations', context.declarations);
-	console.debug('context.bytes', context.bytes);
-	console.debug('context.delta', context.delta);
-	console.debug('runtime(ms)', roundTo3dp(performance.now() - timestamp));
+	console.info('filterAuthorInlineStyles');
+	console.info('context.declarations', context.declarations);
+	console.info('context.bytes', context.bytes);
+	console.info('context.delta', context.delta);
+	console.info('runtime(ms)', roundTo3dp(performance.now() - timestamp));
 }
 
 /**
@@ -586,24 +586,24 @@ function debugFilterAuthorInlineStyles(context, timestamp) {
 function debugFilterActiveInlineStyles(context, timestamp, pass) {
 	// [INPUT] data for the inline style filter before 1st pass.
 	if (pass === 0) {
-		console.debug('filterActiveInlineStyles');
-		console.debug('context.declarations', context.declarations);
-		console.debug('context.bytes', context.bytes);
+		console.info('filterActiveInlineStyles');
+		console.info('context.declarations', context.declarations);
+		console.info('context.bytes', context.bytes);
 		return performance.now();
 	}
 
 	// [PASS] iteration count and bytecount change for each pass.
 	if (pass) {
-		console.debug('filterActiveInlineStyles', 'pass #' + pass);
+		console.info('filterActiveInlineStyles', 'pass #' + pass);
 	} else {
-		console.debug('filterActiveInlineStyles');
-		console.debug('runtime(ms)', roundTo3dp(performance.now() - timestamp));
+		console.info('filterActiveInlineStyles');
+		console.info('runtime(ms)', roundTo3dp(performance.now() - timestamp));
 	}
 
 	// [OUTPUT] declaration count, bytecount and runtime (milliseconds).
-	console.debug('context.declarations', context.declarations);
-	console.debug('context.bytes', context.bytes);
-	console.debug('context.delta', context.delta);
+	console.info('context.declarations', context.declarations);
+	console.info('context.bytes', context.bytes);
+	console.info('context.delta', context.delta);
 }
 
 /**
@@ -681,8 +681,7 @@ function filterAuthorInlineStyles(context, element) {
 	const defaultStyle = getDefaultStyle(context, element);
 
 	// Splice explicit inline style declarations that match default and parent values.
-	tokenizeCssTextDeclarations(styles.inline.cssText)
-		.map(getCssTextProperty)
+	Array.from(styles.inline)
 		.sort(compareHyphenCount)
 		.forEach(spliceAuthorCssStyleDeclaration.bind(null, styles, parentComputedStyle, defaultStyle));
 
@@ -694,7 +693,7 @@ function filterAuthorInlineStyles(context, element) {
 
 	const finalBytes = styles.inline.cssText.length;
 	context.bytes += finalBytes;
-	context.delta -= initialBytes;
+	context.delta -= finalBytes;
 
 	if (element.getAttribute('style') === '') {
 		element.removeAttribute('style');
@@ -736,8 +735,9 @@ function filterActiveInlineStyles(context, element, index) {
 		styles.inline.cssText = 'display: none;';
 		context.declarations += 1;
 	} else {
-		tokenizeCssTextDeclarations(styles.inline.cssText)
+		tokenizeCssTextDeclarations(styles.inline)
 			.map(getCssTextProperty)
+			.sort(compareHyphenCount)
 			.forEach(spliceActiveCssTextDeclaration.bind(null, styles));
 	}
 
@@ -1046,7 +1046,7 @@ function tokenizeCssTextDeclarations(cssText) {
 			const declaration = cssText.substring(
 				prevIndex,
 				isEol && !isSemicolon ? index + 1 : index
-			);
+			).trim();
 			declarations.push(declaration);
 			prevIndex = index + 1;
 		}
@@ -1062,7 +1062,7 @@ function tokenizeCssTextDeclarations(cssText) {
  * @return {string} CSS property for `declaration`.
  */
 function getCssTextProperty(declaration) {
-	return declaration.trim().slice(0, declaration.indexOf(':'));
+	return declaration.slice(0, declaration.indexOf(':'));
 }
 
 /**
