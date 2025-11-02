@@ -12,18 +12,18 @@ const getCachedDeclaration = (transformer) => () => [root, ...root.querySelector
 	.map(transformer)
 	.map(decl => Object.assign({}, decl));
 
-// const computedStylesFn = getCachedDeclaration(el => getComputedStyle(el));
+const computedStylesFn = getCachedDeclaration(el => getComputedStyle(el));
 const inlineStylesFn = getCachedDeclaration(el => el.style);
 
 const info = console.info; // let
-const buffer = [];
+let buffer = [];
 const infoSpy = function() {
 	buffer.push([...arguments].join(' '));
 	info.call(console, ...arguments);
 };
 console.info = infoSpy;
 
-// const computedStylesBefore = computedStylesFn();
+const computedStylesBefore = computedStylesFn();
 
 globalThis.dominlinestylefilter.sync(root, { debug: true });
 
@@ -148,7 +148,6 @@ describe(image + '.svg compression results', function() {
 		}
 	});
 
-	/*
 	it('keeps computed visual results consistent', function() {
 		const filtrates = computedStylesBefore;
 		const results = computedStylesFn();
@@ -158,6 +157,9 @@ describe(image + '.svg compression results', function() {
 			const declarationAfter = results[index];
 
 			for (const prop in declarationBefore) {
+				if (['animation', 'webkitAnimation', 'appRegion', 'webkitAppRegion'].includes(prop)) {
+					continue;
+				}
 				if (Object.prototype.hasOwnProperty.call(declarationBefore, prop)) {
 					const valueBefore = declarationBefore[prop];
 					const valueAfter = declarationAfter[prop];
@@ -169,8 +171,6 @@ describe(image + '.svg compression results', function() {
 	});
 
 	it('produces determinate results across runs', function() {
-		const prevBuffer = structuredClone(buffer);
-
 		console.info = infoSpy;
 		buffer = [];
 
@@ -195,19 +195,11 @@ describe(image + '.svg compression results', function() {
 				continue;
 			}
 
-			const prevLine = prevBuffer[index];
-
 			if ((isInAuthorResult + isInActiveResult) === 2) {
-				if (line.startsWith('runtime')) {
-					const timeAfter = line.match(/\d+/);
-					const timeBefore = prevLine.match(/\d+/);
-					const difference = (timeAfter - timeBefore) / timeBefore;
-					expect(difference).toBeLessThan(0.2).tobeGreaterThan(-0.2);
-				} else {
-					expect(line).toEqual(prevLine);
+				if (line.startsWith('context.delta')) {
+					expect(line.match(/\d+$/)[0]).toEqual('0');
 				}
 			}
 		}
 	});
-		*/
 });

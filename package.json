@@ -8,7 +8,7 @@
     "test": "npm-run-all build test-syntax test-lint test-karma",
     "test-lint": "eslint src/index.js",
     "test-syntax": "node --check src/index.js",
-    "test-karma": "karma start karma.conf.js --single-run",
+    "test-karma": "grunt test",
     "format": "eslint src --fix && prettier --write ."
   },
   "repository": {

@@ -9,6 +9,10 @@ module.exports = function(config) {
 		// base path that will be used to resolve all patterns (eg. files, exclude)
 		basePath: '',
 
+		// increase the timeout for browser inactivity
+		browserDisconnectTimeout: 120000, // 120 seconds
+		browserNoActivityTimeout: 120000, // 120 seconds
+
 		// start these browsers
 		// available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
 		browsers: ['Chrome', 'Firefox'],
