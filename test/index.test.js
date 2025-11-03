@@ -39,30 +39,30 @@ for (const line of buffer) {
 		isInActiveFilter = true;
 	}
 	if (!isInActiveFilter && line.startsWith('context.pyramid.length')) {
-		generalData.elements = parseFloat(line.match(/\d+$/));
+		generalData.elements = parseFloat(line.match(/[\d.]+$/));
 	}
 	if (!isInActiveFilter && line.startsWith('runtime')) {
-		authorData.runtime = parseFloat(line.match(/\d+$/));
+		authorData.runtime = parseFloat(line.match(/[\d.]+$/));
 	}
 	if (!isInActiveFilter && line.startsWith('context.bytes')) {
-		authorData.bytes.push(parseFloat(line.match(/\d+$/)));
+		authorData.bytes.push(parseFloat(line.match(/[\d.]+$/)));
 	}
 	if (!isInActiveFilter && line.startsWith('context.declarations')) {
-		authorData.declarations.push(parseFloat(line.match(/\d+$/)));
+		authorData.declarations.push(parseFloat(line.match(/[\d.]+$/)));
 	}
 
 	if (isInActiveFilter && line.startsWith('runtime')) {
-		activeData.runtime = parseFloat(line.match(/\d+$/));
+		activeData.runtime = parseFloat(line.match(/[\d.]+$/));
 		break;
 	}
 	if (isInActiveFilter && line.startsWith('context.bytes')) {
-		activeData.bytes.push(parseFloat(line.match(/\d+$/)));
+		activeData.bytes.push(parseFloat(line.match(/[\d.]+$/)));
 	}
 	if (isInActiveFilter && line.startsWith('context.declarations')) {
-		activeData.declarations.push(parseFloat(line.match(/\d+$/)));
+		activeData.declarations.push(parseFloat(line.match(/[\d.]+$/)));
 	}
 	if (isInActiveFilter && line.startsWith('context.delta')) {
-		activeData.deltas.push(parseFloat(line.match(/\d+$/)));
+		activeData.deltas.push(parseFloat(line.match(/[\d.]+$/)));
 	}
 }
 
@@ -96,32 +96,23 @@ describe(image + '.svg compression results', function() {
 		}
 	});
 
-	it('has a runtime of below 6ms/element in the author filter', function() {
-		if (image === 'wiki') {
-			this.skip();
-		}
+	it('has a runtime of below 3ms/element in the author filter', function() {
 		const count = generalData.elements;
 		const runtime = authorData.runtime;
-		expect(runtime / count).toBeLessThanOrEqual(6);
+		expect(runtime / count).toBeLessThanOrEqual(3);
 	});
 
-	it('has a runtime of below 12ms/element in the active filter', function() {
-		if (image === 'wiki') {
-			this.skip();
-		}
+	it('has a runtime of below 6ms/element in the active filter', function() {
 		const count = generalData.elements;
 		const runtime = activeData.runtime;
 		expect(runtime / count).toBeLessThanOrEqual(12);
 	});
 
-	it('has a runtime of below 6x of the author filter in the active filter', function() {
-		if (image === 'wiki') {
-			this.skip();
-		}
+	it('has a runtime of below 5x of the author filter in the active filter', function() {
 		const count = generalData.elements;
 		const authorTimeCost = authorData.runtime / count;
 		const activeTimeCost = activeData.runtime / count;
-		expect(activeTimeCost / authorTimeCost).toBeLessThanOrEqual(6);
+		expect(activeTimeCost / authorTimeCost).toBeLessThanOrEqual(5);
 	});
 
 	it('has 4 or less passes in the active filter', function() {
@@ -156,7 +147,9 @@ describe(image + '.svg compression results', function() {
 			expect('margin-inline-end' in properties).toBeFalse();
 		}
 	});
+});
 
+describe(image + '.svg filter algorithm', function() {
 	it('keeps computed visual results consistent', function() {
 		const filtrates = computedStylesBefore;
 		const results = computedStylesFn();
@@ -169,7 +162,7 @@ describe(image + '.svg compression results', function() {
 				if (['animation', 'webkitAnimation', 'appRegion', 'webkitAppRegion'].includes(prop)) {
 					continue;
 				}
-				if (Object.prototype.hasOwnProperty.call(declarationBefore, prop)) {
+				if (typeof prop === 'string' && Object.prototype.hasOwnProperty.call(declarationAfter, prop)) {
 					const valueBefore = declarationBefore[prop];
 					const valueAfter = declarationAfter[prop];
 
@@ -179,10 +172,7 @@ describe(image + '.svg compression results', function() {
 		}
 	});
 
-	it('produces determinate results across runs', function() {
-		if (image === 'wiki') {
-			this.skip();
-		}
+	it('produces determinate results across runs', async function() {
 		console.info = infoSpy;
 		buffer = [];
 
@@ -209,7 +199,7 @@ describe(image + '.svg compression results', function() {
 
 			if ((isInAuthorResult + isInActiveResult) === 2) {
 				if (line.startsWith('context.delta')) {
-					expect(line.match(/\d+$/)[0]).toEqual('0');
+					expect(line.match(/[\d.]+$/)[0]).toEqual('0');
 				}
 			}
 		}
