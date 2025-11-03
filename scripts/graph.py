@@ -61,6 +61,7 @@ for log in logs:
 	fitted_values = exponential_func(fitted_passes, *params)
 
 	# Plot the compression quotients
+	plt.style.use('dark_background')
 	plt.figure(figsize=(6, 4))
 	plt.plot(passes, compression_quotients, 'o', label='Compression Quotients', color='blue')
 	polarity = '+' if params[0] > 0 else ''
@@ -74,5 +75,6 @@ for log in logs:
 	plt.grid()
 
 	# Show and save the plot
+	plt.savefig(Path(__file__).parent.parent / 'assets' / (log + '-graph.png'))
 	plt.show()
-	# plt.savefig(Path(__file__).parent.parent / 'assets' / (log + '-graph.png'))
+	plt.close()
