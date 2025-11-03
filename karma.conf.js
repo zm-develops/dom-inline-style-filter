@@ -10,8 +10,8 @@ module.exports = function(config) {
 		basePath: '',
 
 		// increase the timeout for browser inactivity
-		browserDisconnectTimeout: 120000, // 120 seconds
-		browserNoActivityTimeout: 120000, // 120 seconds
+		browserDisconnectTimeout: 3600000, // 1 hour
+		browserNoActivityTimeout: 3600000, // 1 hour
 
 		// start these browsers
 		// available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
