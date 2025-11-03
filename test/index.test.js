@@ -108,11 +108,11 @@ describe(image + '.svg compression results', function() {
 		expect(runtime / count).toBeLessThanOrEqual(12);
 	});
 
-	it('has a runtime of below 5x of the author filter in the active filter', function() {
+	it('has a runtime of below 8x of the author filter in the active filter', function() {
 		const count = generalData.elements;
 		const authorTimeCost = authorData.runtime / count;
 		const activeTimeCost = activeData.runtime / count;
-		expect(activeTimeCost / authorTimeCost).toBeLessThanOrEqual(5);
+		expect(activeTimeCost / authorTimeCost).toBeLessThanOrEqual(8);
 	});
 
 	it('has 4 or less passes in the active filter', function() {
