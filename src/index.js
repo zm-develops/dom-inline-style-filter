@@ -883,7 +883,9 @@ function cacheAuthorStyleRegressionGuard(styles) {
  */
 function applyAuthorStyleRegressionGuard(styles, guardStyles) {
 	for (const prop of regressionPropertySet) {
-		styles.inline.setProperty(prop, guardStyles[prop]);
+		if (styles.computed.getPropertyValue(prop) !== guardStyles[prop]) {
+			styles.inline.setProperty(prop, guardStyles[prop]);
+		}
 	}
 }
 
