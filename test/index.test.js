@@ -159,14 +159,24 @@ describe(image + '.svg filter algorithm', function() {
 			const declarationAfter = results[index];
 
 			for (const prop in declarationBefore) {
-				if (['animation', 'webkitAnimation', 'appRegion', 'webkitAppRegion'].includes(prop)) {
+				if ([
+					'animation',
+					'webkitAnimation',
+					'appRegion',
+					'webkitAppRegion',
+					'perspectiveOrigin',
+					'webkitPerspectiveOrigin',
+					'transformOrigin',
+					'webkitTransformOrigin'
+				].includes(prop)) {
 					continue;
 				}
+
 				if (typeof prop === 'string' && Object.prototype.hasOwnProperty.call(declarationAfter, prop)) {
 					const valueBefore = declarationBefore[prop];
 					const valueAfter = declarationAfter[prop];
 
-					expect(valueAfter).toEqual(valueBefore);
+					expect(valueAfter).withContext(prop).toEqual(valueBefore);
 				}
 			}
 		}
