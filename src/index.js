@@ -817,35 +817,25 @@ function unfreezeStyleAnimations(styles, animations) {
 }
 
 /**
- * Hack to handle box model origin properties as a late pass.
+ * Hack to handle box model origin properties as an early pass.
  *
  * This prevent offsets from increasing layout compute load.
- * It also handles implicit or imprecise computed values.
+ * If there is no offset value (`transform` or `perspective`), the property is unneeded.
  *
  * @param {Styles} styles Styles object for the element.
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_transforms/Using_CSS_transforms
+ * @returns {Origins|void} Original box model origins where applicable.
  */
 function handleBoxModelOrigins(styles) {
 	for (const name of boxModelOffsetKeys) {
 		const inlineValue = styles.inline.getPropertyValue(name);
-		const computedValue = styles.computed.getPropertyValue(name);
 
 		if (!inlineValue) {
-			return;
+			continue;
 		}
 
-		styles.inline.removeProperty(name);
-
-		// Rounding is missing in legacy WebKit for the computed value.
-		const roundedValue = computedValue.replace(/[0-9.]+/g, function(n) {
-			return Math.round(parseFloat(n) * 10000) / 10000;
-		});
-
-		// We use the computed value to avoid implicit values like
-		// `auto` or `50% 50%`.
-		const unsetComputedValue = styles.computed.getPropertyValue(name);
-		if (unsetComputedValue !== roundedValue) {
-			styles.inline.setProperty(name, inlineValue);
+		if (!styles.inline.getPropertyValue(name.replace('-origin', ''))) {
+			styles.inline.removeProperty(name);
 		}
 	}
 }
