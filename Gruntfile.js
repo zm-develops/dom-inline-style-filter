@@ -2,8 +2,9 @@ module.exports = function(grunt) {
 	grunt.initConfig({
 		iife: {
 			dist: {
+				// Wrap src/index.js inside an IIFE and output to dist/index.min.js
 				files: {
-					'dist/index.min.js': 'dist/index.min.js'
+					'dist/index.min.js': ['src/index.js'],
 				},
 				options: {
 					indent: '    ',
