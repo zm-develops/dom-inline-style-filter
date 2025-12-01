@@ -11,6 +11,10 @@
     "test-karma": "grunt test",
     "format": "eslint src --fix && prettier --write ."
   },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/zm-develops"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zm-develops/dom-inline-style-filter.git"
