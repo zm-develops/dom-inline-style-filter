@@ -686,6 +686,11 @@ function filterAuthorInlineStyles(context, element) {
 		: null;
 	const defaultStyle = getDefaultStyle(context, element);
 
+	// Remove property declarations that are duplicated from a parent element.
+	if (parentComputedStyle) {
+		removeDuplicateCustomProperties(styles, parentComputedStyle);
+	}
+
 	// Splice explicit inline style declarations that match default and parent values.
 	tokenizeCssTextDeclarations(styles.inline.cssText)
 		.map(getCssTextProperty)
@@ -1019,6 +1024,21 @@ function destroyElementHierarchy(element) {
 			parentElement.removeChild(targetElement);
 		}
 		targetElement = parentElement;
+	}
+}
+
+/**
+ * Removes duplicate CSS properties from the parent element's style.
+ *
+ * @param {Styles} styles Styles object for the element.
+ * @param {CSSStyleDeclaration} parentStyle Parent element's style declaration.
+ */
+function removeDuplicateCustomProperties(styles, parentStyle) {
+	for (const name of parentStyle) {
+		const parentValue = parentStyle.getPropertyValue(name);
+		if (name.startsWith('--') && styles.inline.getPropertyValue(name) === parentValue) {
+			styles.inline.removeProperty(name);
+		}
 	}
 }
 
