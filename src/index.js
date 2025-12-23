@@ -141,10 +141,10 @@ const regressionPropertySet = new Set([
  */
 const dominlinestylefilter = function(clone, options) {
 	options = options || {};
-	options.debug = typeof options.debug === 'boolean'
+	options.debug = typeof options.debug !== 'undefined'
 		? options.debug
 		: dominlinestylefilter.impl.options.debug;
-	options.strict = typeof options.strict === 'boolean'
+	options.strict = typeof options.strict !== 'undefined'
 		? options.strict
 		: dominlinestylefilter.impl.options.strict;
 	const context = new Context(clone, 	options);
@@ -829,7 +829,7 @@ function unfreezeStyleAnimations(styles, animations) {
  *
  * @param {Styles} styles Styles object for the element.
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_transforms/Using_CSS_transforms
- * @returns {Origins|void} Original box model origins where applicable.
+ * @return {void}
  */
 function handleBoxModelOrigins(styles) {
 	for (const name of boxModelOffsetKeys) {
