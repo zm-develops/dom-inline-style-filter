@@ -1,29 +1,29 @@
-VM114:7 filterAuthorInlineStyles
-VM114:7 context.pyramid.length 405
-VM114:7 context.declarations 154328
-VM114:7 context.bytes 2521251
-VM114:7 filterAuthorInlineStyles
-VM114:7 context.declarations 73258
-VM114:7 context.bytes 903799
-VM114:7 context.delta 1617452
-VM114:7 runtime(ms) 1010.5
-VM114:7 filterActiveInlineStyles
-VM114:7 context.declarations 73258
-VM114:7 context.bytes 903799
-VM114:7 filterActiveInlineStyles pass #1
-VM114:7 context.declarations 44098
-VM114:7 context.bytes 188624
-VM114:7 context.delta 715175
-VM114:7 filterActiveInlineStyles pass #2
-VM114:7 context.declarations 43114
-VM114:7 context.bytes 148942
-VM114:7 context.delta 39682
-VM114:7 filterActiveInlineStyles pass #3
-VM114:7 context.declarations 43114
-VM114:7 context.bytes 148942
-VM114:7 context.delta 0
-VM114:7 filterActiveInlineStyles
-VM114:7 runtime(ms) 6313.3
-VM114:7 context.declarations 43114
-VM114:7 context.bytes 148942
-VM114:7 context.delta 0
+VM14:7 filterAuthorInlineStyles
+VM14:7 context.pyramid.length 405
+VM14:7 context.declarations 154328
+VM14:7 context.bytes 2521251
+VM14:7 filterAuthorInlineStyles
+VM14:7 context.declarations 73258
+VM14:7 context.bytes 766991
+VM14:7 context.delta 1754260
+VM14:7 runtime(ms) 1194.7
+VM14:7 filterActiveInlineStyles
+VM14:7 context.declarations 73258
+VM14:7 context.bytes 766991
+VM14:7 filterActiveInlineStyles pass #1
+VM14:7 context.declarations 51374
+VM14:7 context.bytes 164688
+VM14:7 context.delta 602303
+VM14:7 filterActiveInlineStyles pass #2
+VM14:7 context.declarations 50390
+VM14:7 context.bytes 125006
+VM14:7 context.delta 39682
+VM14:7 filterActiveInlineStyles pass #3
+VM14:7 context.declarations 50390
+VM14:7 context.bytes 125006
+VM14:7 context.delta 0
+VM14:7 filterActiveInlineStyles
+VM14:7 runtime(ms) 3109.3
+VM14:7 context.declarations 50390
+VM14:7 context.bytes 125006
+VM14:7 context.delta 0
