@@ -10,7 +10,7 @@ const root = bench.firstChild.firstChild;
 
 const getCachedDeclaration = (transformer) => () => [root, ...root.querySelectorAll('*')]
 	.map(transformer)
-	.map(decl => Object.assign({}, decl));
+	.map(decl => Object.assign({ length: decl.length }, decl));
 
 const computedStylesFn = getCachedDeclaration(el => getComputedStyle(el));
 const inlineStylesFn = getCachedDeclaration(el => el.style);
@@ -87,7 +87,7 @@ describe(image + '.svg compression results', function() {
 		const declarations = inlineStylesFn();
 		for (const declaration of declarations) {
 			const maxHyphenCount = Math.max(
-				...Object.keys(declaration)
+				...Array.from(declaration)
 					.filter(prop => typeof prop === 'string')
 					.filter(prop => !prop.startsWith('-'))
 					.map(prop => prop.split('-').length)
