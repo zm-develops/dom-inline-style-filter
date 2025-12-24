@@ -320,10 +320,12 @@ function createSandbox() {
 	iframe.id = 'dominlinestylefilter-sandbox-' + hash;
 	hashes.add(hash);
 
-	iframe.style.visibility = 'hidden';
-	iframe.style.position = 'fixed';
-	iframe.style.width = '100vw';
 	iframe.style.height = '100vh';
+	iframe.style.position = 'fixed';
+	iframe.style.pointerEvents = 'none';
+	iframe.style.userSelect = 'none';
+	iframe.style.visibility = 'hidden';
+	iframe.style.width = '100vw';
 
 	// figure out how this document is defined (doctype and charset)
 	const charsetToUse = globalThis.document.characterSet || 'UTF-8';
