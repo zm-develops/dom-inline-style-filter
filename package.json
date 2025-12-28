@@ -1,6 +1,6 @@
 {
   "name": "dom-inline-style-filter",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "High-pass data compression filter for inline styling (embedded CSS) by computed effect.",
   "main": "./dist/index.min.js",
   "scripts": {
@@ -20,7 +20,12 @@
     "url": "git+https://github.com/zm-develops/dom-inline-style-filter.git"
   },
   "keywords": [
-    "dom"
+    "dom",
+    "css",
+    "svg",
+    "image",
+    "filter",
+    "compression"
   ],
   "author": "zm-develops",
   "license": "MIT",
