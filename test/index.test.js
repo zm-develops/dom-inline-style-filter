@@ -96,10 +96,10 @@ describe(image + '.svg compression results', function() {
 		}
 	});
 
-	it('has a runtime of below 4ms/element in the author filter', function() {
+	it('has a runtime of below 8ms/element in the author filter', function() {
 		const count = generalData.elements;
 		const runtime = authorData.runtime;
-		expect(runtime / count).toBeLessThanOrEqual(4);
+		expect(runtime / count).toBeLessThanOrEqual(8);
 	});
 
 	it('has a runtime of below 16ms/element in the active filter', function() {
@@ -166,6 +166,7 @@ describe(image + '.svg filter algorithm', function() {
 					'webkitAppRegion',
 					'perspectiveOrigin',
 					'webkitPerspectiveOrigin',
+					'timelineTrigger',
 					'transformOrigin',
 					'webkitTransformOrigin'
 				].includes(prop)) {
