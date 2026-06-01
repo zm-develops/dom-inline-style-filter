@@ -520,8 +520,8 @@ function multiPassFilter(context) {
 		tick = debugFilterAuthorInlineStyles(context);
 	}
 
-	// If there are >~64 base2 declarations, we need to filter the inline styles in a separate pass.
-	if (Math.round(Math.log2(context.declarations / context.pyramid.length)) >= 6) {
+	// If there are >>32 base2 declarations, we need to filter the inline styles in a separate pass.
+	if (Math.round(Math.log2(context.declarations / context.pyramid.length)) >= 5) {
 		context.delta = 0;
 		context.pyramid.forEach(filterAuthorInlineStyles.bind(null, context));
 		if (context.options.debug) {
